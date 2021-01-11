@@ -22,7 +22,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 def main(opt):
-    out, dataset, weight = opt.save_dir, opt.dataset, opt.weights
+    out, dataset, weight, model = opt.save_dir, opt.dataset, opt.weights, opt.model
 
     device = select_device(opt.device)
 
@@ -32,7 +32,7 @@ def main(opt):
     dataset = os.path.join(os.getcwd(), 'TestData', dataset)  # Not end with /
     inference = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
     weights = os.path.join(os.getcwd(), 'SavedModels', weight)
-    ckptfile = os.path.join(os.getcwd(), 'SavedModels', 'XNet_Temp.pt')
+    ckptfile = os.path.join(os.getcwd(), 'SavedModels', model + '_Temp.pt')
     datalist = glob.glob(dataset + os.sep + '*')
 
     if not os.path.exists(inference):
@@ -77,13 +77,14 @@ def main(opt):
 
         save_output(datalist[i_test], pred, inference)
 
-    logging.info('\n' + '%s is %f fps in the %s DataSet.' % ('XNet', len(datalist) / time_sum, inference))
+    logging.info('\n' + '%s is %f fps in the %s DataSet.' % (model, len(datalist) / time_sum, inference))
     print('Done. (%.3fs)' % (time.time() - t0))
     torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument('--model', nargs='+', type=str, default='XNet', help='XNet')
     parser.add_argument('--weights', nargs='+', type=str, default='XNet.pt', help='model.pt path(s)')
     parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1 or cpu)')
     parser.add_argument('--dataset', type=str, default='SOD', help='TUDS-TE PASCAL HKU')
