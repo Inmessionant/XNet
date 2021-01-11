@@ -2,78 +2,102 @@ import argparse
 import glob
 import logging
 import os
+import shutil
 import time
 from pathlib import Path
 
 import torch
 import torch.optim as optim
+from torch.cuda import amp
+import torch.distributed as dist
 from torch.utils.data import DataLoader
 from torchvision import transforms
-from tqdm import tqdm
 
 from Model.XNet import XNet
-from Model.data_loader import (Rescale, RescaleT, RandomCrop, ToTensor, ToTensorLab, SalObjDataset)
-from Model.torch_utils import (init_seeds, time_synchronized, XBCELoss, model_info, check_file, select_device,
-                               strip_optimizer, normPRED, save_output)
+from Model.data_loader import (RescaleT, ToTensorLab, SODDataset)
+from Model.torch_utils import (time_synchronized, model_info, check_file, select_device, strip_optimizer, normPRED,
+                               save_output)
 
 logging.getLogger().setLevel(logging.INFO)
 
 
-# change gpus，model_name，pre_data_dir,  model, num_workers
-def main():
-    model_name = 'XNet'
-    pre_data_dir = 'SOD'  # 'TUDS-TE'   'PASCAL'   'HKU'
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+def main(opt):
+    out, dataset, weight = opt.save_dir, opt.dataset, opt.weights
 
-    # Models : NUSNet  NUSNet4  NUSNet5  NUSNet6  NUSNet7  NUSNetCAM  NUSNetSAM  NUSNetCBAM
-    # NUSNetNet765CAM4SMALLSAM
-    model = XNet(3, 1)    # input channels and output channels
-    model_info(model, verbose=True)
+    device = select_device(opt.device)
 
-    model.to(device)
-    # logging.info(summary(model, (3, 320, 320)))
+    if os.path.exists(out):  # output dir
+        shutil.rmtree(out)  # delete dir
+    os.makedirs(out)  # make new dir
 
-    image_dir = os.path.join(os.getcwd(), 'test_data', pre_data_dir)
-    prediction_dir = os.path.join(os.getcwd(), 'test_data', pre_data_dir + '_Results', model_name + os.sep)
-    model_dir = os.path.join(os.getcwd(), 'saved_models', model_name + '.pth')
-    img_name_list = glob.glob(image_dir + os.sep + '*')
+    model = XNet(3, 1)
+    model.to(device).eval()
 
-    if not os.path.exists(prediction_dir):
-        os.makedirs(prediction_dir, exist_ok=True)
+    dataset = os.path.join(os.getcwd(), 'TestData', dataset)  # Not end with /
+    inference = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
+    weights = os.path.join(os.getcwd(), 'SavedModels', weight)
+    ckptfile = os.path.join(os.getcwd(), 'SavedModels', 'XNet_Temp.pt')
+    datalist = glob.glob(dataset + os.sep + '*')
 
-    model.load_state_dict(torch.load(model_dir))
+    if not os.path.exists(inference):
+        os.makedirs(inference, exist_ok=True)
+
+    # optimizer
+    if opt.adam:
+        optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
+    else:
+        optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+
+    if opt.resume:
+        ckpt = torch.load(ckptfile, map_location=device) if check_file(ckptfile) else None
+        model.load_state_dict(ckpt['model'])
+        optimizer.load_state_dict(ckpt['optimizer'])
+    else:
+        model.load_state_dict(torch.load(weights))
 
     # dataloader
-    test_salobj_dataset = SalObjDataset(img_name_list=img_name_list, lbl_name_list=[],
-                                        transform=transforms.Compose([RescaleT(320), ToTensorLab(flag=0)]))
-    test_salobj_dataloader = DataLoader(test_salobj_dataset, batch_size=1, shuffle=False, num_workers=8,
-                                        pin_memory=True)
+    TestSODDataSet = SODDataset(img_name_list=datalist, lbl_name_list=[],
+                                transform=transforms.Compose([RescaleT(320), ToTensorLab(flag=0)]))
+    TestSODDataLoader = DataLoader(TestSODDataSet, batch_size=1, shuffle=False, num_workers=opt.workers,
+                                   pin_memory=True)
     time_sum = 0
     logging.info('Start inference!')
-    model.eval()
 
+    t0 = time.time()
     # inference for each image
-    for i_test, data_test in enumerate(test_salobj_dataloader):
-        logging.info('testing: %s' % img_name_list[i_test].split(os.sep)[-1])
+    for i_test, data_test in enumerate(TestSODDataLoader):
+        logging.info('testing: %s' % datalist[i_test].split(os.sep)[-1])
 
         inputs_test = data_test['image']
-        inputs_test = inputs_test.type(torch.FloatTensor)
-        inputs_test = inputs_test.to(device, non_blocking=True)
+        inputs_test = inputs_test.type(torch.FloatTensor).to(device, non_blocking=True)
 
-        with torch.no_grad():
-            start = time_synchronized()
-            sup1, sup2, sup3, sup4, sup5, sup6, sup7 = model(inputs_test)
-            time_sum += time_synchronized() - start
+        start = time_synchronized()
+        fusion_loss = model(inputs_test)
+        time_sum += time_synchronized() - start
 
-            # normalization
-            pred = sup1[:, 0, :, :]
-            pred = normPRED(pred)
+        # normalization
+        pred = fusion_loss[:, 0, :, :]
+        pred = normPRED(pred)
 
-            save_output(img_name_list[i_test], pred, prediction_dir)
+        save_output(datalist[i_test], pred, inference)
 
-    logging.info('\n' + '%s is %f fps in the %s DataSet.' % (model_name, len(img_name_list) / time_sum, pre_data_dir))
+    logging.info('\n' + '%s is %f fps in the %s DataSet.' % ('XNet', len(datalist) / time_sum, inference))
+    print('Done. (%.3fs)' % (time.time() - t0))
     torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--weights', nargs='+', type=str, default='XNet.pt', help='model.pt path(s)')
+    parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1 or cpu)')
+    parser.add_argument('--dataset', type=str, default='SOD', help='TUDS-TE PASCAL HKU')
+    parser.add_argument('--save-dir', type=str, default='Inference', help='directory to save results')
+    parser.add_argument('--resume', nargs='?', const=True, default=False, help='most recent training Model')
+    parser.add_argument('--adam', nargs='?', const=True, default=False, help='use torch.optim.Adam() optimizer')
+    parser.add_argument('--workers', type=int, default=0, help='maximum number of dataloader workers')
+    opt = parser.parse_args()
+    print(opt)
+
+    with torch.no_grad():
+        main(opt)
+        strip_optimizer(opt.weights)

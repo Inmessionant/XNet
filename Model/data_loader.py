@@ -239,7 +239,7 @@ class ToTensorLab(object):
         return {'imidx': torch.from_numpy(imidx.copy()), 'image': torch.from_numpy(tmpImg.copy()), 'label': torch.from_numpy(tmpLbl.copy())}
 
 
-class SalObjDataset(Dataset):
+class SODDataset(Dataset):
     def __init__(self, img_name_list, lbl_name_list, transform=None):
         self.image_name_list = img_name_list
         self.label_name_list = lbl_name_list

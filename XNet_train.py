@@ -15,10 +15,8 @@ from torchvision import transforms
 from tqdm import tqdm
 
 from Model.XNet import XNet
-from Model.NUSNet import NUSNet
-from Model.data_loader import (Rescale, RescaleT, RandomCrop, ToTensor, ToTensorLab, SalObjDataset)
-from Model.torch_utils import (init_seeds, model_info, check_file, select_device,
-                               strip_optimizer)
+from Model.data_loader import (RescaleT, RandomCrop, ToTensorLab, SalObjDataset)
+from Model.torch_utils import (init_seeds, model_info, check_file, select_device, strip_optimizer)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -27,10 +25,7 @@ def main(opt):
     init_seeds(2 + opt.batch_size)
 
     # Define Model
-    if opt.model_name == 'NUSNet':
-        model = NUSNet(3, 1)  # input channels and output channels
-    else:
-        return
+    model = XNet(3, 1)  # input channels and output channels
     model_info(model, verbose=True)  # logging.info(summary(model, (3, 320, 320)))
 
     # optimizer
@@ -99,9 +94,8 @@ def main(opt):
                                                         sampler=train_sampler,
                                                         shuffle=False, num_workers=opt.workers, pin_memory=True)
     if opt.resume:
-        check_file(log_dir)
-        ckpt = torch.load(log_dir, map_location=device)
-        model.load_state_dict(ckpt['model'], False)
+        ckpt = torch.load(log_dir, map_location=device) if check_file(log_dir) else None
+        model.load_state_dict(ckpt['model'])
         optimizer.load_state_dict(ckpt['optimizer'])
         start_epoch = ckpt['epoch']
 
@@ -171,15 +165,14 @@ def main(opt):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=10)
-    parser.add_argument('--batch-size', type=int, default=8, help='batch size')
-    parser.add_argument('--model-name', type=str, default='NUSNet', help='model')
+    parser.add_argument('--epochs', type=int, default=15000)
+    parser.add_argument('--batch-size', type=int, default=32, help='batch size')
+    parser.add_argument('--model-name', type=str, default='XNet', help='model')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
     parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
-    parser.add_argument('--DDP', nargs='?', const=True, default=False, help='DDP mode')
     parser.add_argument('--device', default='0, 1', help='device id (i.e. 0 or 0,1 or cpu)')
     parser.add_argument('--workers', type=int, default=0, help='maximum number of dataloader workers')
-
     opt = parser.parse_args()
+    print(opt)
 
     main(opt)
