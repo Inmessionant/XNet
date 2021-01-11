@@ -26,10 +26,6 @@ def main(opt):
 
     device = select_device(opt.device)
 
-    if os.path.exists(out):  # output dir
-        shutil.rmtree(out)  # delete dir
-    os.makedirs(out)  # make new dir
-
     model = XNet(3, 1)
     model.to(device).eval()
 
