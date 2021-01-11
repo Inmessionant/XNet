@@ -64,11 +64,10 @@ def main(opt):
     for i_test, data_test in enumerate(TestSODDataLoader):
         logging.info('testing: %s' % datalist[i_test].split(os.sep)[-1])
 
-        inputs_test = data_test['image']
-        inputs_test = inputs_test.type(torch.FloatTensor).to(device, non_blocking=True)
+        input = data_test['image'].type(torch.FloatTensor).to(device, non_blocking=True)
 
         start = time_synchronized()
-        fusion_loss = model(inputs_test)
+        fusion_loss = model(input)
         time_sum += time_synchronized() - start
 
         # normalization

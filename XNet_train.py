@@ -113,15 +113,14 @@ def main(opt):
         for i, data in pbar:
             ite_num = ite_num + 1
 
-            input, label = data['image'].type(torch.FloatTensor), data['label'].type(torch.FloatTensor)
-            inputs, labels = input.to(device, non_blocking=True), label.to(device, non_blocking=True)
-
-            # forward + backward + optimize
-            fusion_loss = model(inputs)
-            loss = nn.BCELoss(reduction='mean')(fusion_loss, labels).cuda()
+            input, label = data['image'].type(torch.FloatTensor).to(device, non_blocking=True), data['label'].type(torch.FloatTensor).to(device, non_blocking=True)
 
             # y zero the parameter gradients
             optimizer.zero_grad()
+
+            # forward + backward + optimize
+            fusion_loss = model(input)
+            loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
 
             if not opt.DDP:
                 loss.backward()
