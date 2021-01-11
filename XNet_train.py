@@ -3,17 +3,21 @@ import glob
 import logging
 import os
 import time
+import torch.distributed as dist
 from pathlib import Path
 
 import torch
 import torch.optim as optim
+from torch import nn
+from torch.cuda import amp
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
 
 from Model.XNet import XNet
+from Model.NUSNet import NUSNet
 from Model.data_loader import (Rescale, RescaleT, RandomCrop, ToTensor, ToTensorLab, SalObjDataset)
-from Model.torch_utils import (init_seeds, time_synchronized, XBCELoss, model_info, check_file, select_device,
+from Model.torch_utils import (init_seeds, model_info, check_file, select_device,
                                strip_optimizer)
 
 logging.getLogger().setLevel(logging.INFO)
@@ -21,24 +25,42 @@ logging.getLogger().setLevel(logging.INFO)
 
 def main(opt):
     init_seeds(2 + opt.batch_size)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    if opt.model_name == 'XNet':
-        model = XNet(3, 1)  # input channels and output channels
+    # Define Model
+    if opt.model_name == 'NUSNet':
+        model = NUSNet(3, 1)  # input channels and output channels
     else:
         return
+    model_info(model, verbose=True)  # logging.info(summary(model, (3, 320, 320)))
 
-    model_info(model, verbose=True)
+    # optimizer
+    if opt.SGD:
+        optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
 
-    model.to(device)
-    # logging.info(summary(model, (3, 320, 320)))
+    # Single GPU or DDP model
+    if not opt.DDP:
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model.to(device)
+    else:
+        device = select_device(opt.device)
+        print("Using apex synced BN.")
+        model = amp.parallel.convert_syncbn_model(model)
+        model.to(device)
+        model, optimizer = amp.initialize(model, optimizer, opt_level='O1', verbosity=0)
 
-    optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+        dist.init_process_group(backend='nccl',  # 'distributed backend'
+                                init_method='tcp://127.0.0.1:9999',  # distributed training init method
+                                world_size=1,  # number of nodes for distributed training
+                                rank=0)  # distributed training node rank
 
-    tra_image_dir = os.path.abspath(str(Path('train_data/TR-Image')))
-    tra_label_dir = os.path.abspath(str(Path('train_data/TR-Mask')))
-    saved_model_dir = os.path.join(os.getcwd(), 'saved_models' + os.sep)
-    log_dir = os.path.join(os.getcwd(), 'saved_models', opt.model_name + '_Temp.pth')
+        model = torch.nn.parallel.DistributedDataParallel(model, find_unused_parameters=True)
+
+    tra_image_dir = os.path.abspath(str(Path('Train_Data/TR-Image')))
+    tra_label_dir = os.path.abspath(str(Path('Train_Data/TR-Mask')))
+    saved_model_dir = os.path.join(os.getcwd(), 'SavedModels' + os.sep)
+    log_dir = os.path.join(os.getcwd(), 'SavedModels', opt.model_name + '_Temp.pth')
 
     if not os.path.exists(saved_model_dir):
         os.makedirs(saved_model_dir, exist_ok=True)
@@ -59,23 +81,32 @@ def main(opt):
         tra_lbl_name_list), 'The number of training images: %g the number of training labels: %g .' % (
         len(tra_img_name_list), len(tra_lbl_name_list))
 
-    salobj_dataset = SalObjDataset(img_name_list=tra_img_name_list, lbl_name_list=tra_lbl_name_list,
-                                   transform=transforms.Compose([RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
-    salobj_dataloader = DataLoader(salobj_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
-                                   pin_memory=True)
-
     start_epoch = 0
-    # If there is a saved model, load the model and continue training based on it
+
+    if not opt.DDP:  # Single GPU
+        salobj_dataset = SalObjDataset(img_name_list=tra_img_name_list, lbl_name_list=tra_lbl_name_list,
+                                       transform=transforms.Compose(
+                                           [RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
+        salobj_dataloader = DataLoader(salobj_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
+                                       pin_memory=True)
+
+    else:  # DDP Model
+        salobj_dataset = SalObjDataset(img_name_list=tra_img_name_list, lbl_name_list=tra_lbl_name_list,
+                                       transform=transforms.Compose(
+                                           [RescaleT(400), RandomCrop(300), ToTensorLab(flag=0)]))
+        train_sampler = torch.utils.data.distributed.DistributedSampler(salobj_dataset)
+        salobj_dataloader = torch.utils.data.DataLoader(salobj_dataset, batch_size=opt.batch_size,
+                                                        sampler=train_sampler,
+                                                        shuffle=False, num_workers=opt.workers, pin_memory=True)
     if opt.resume:
         check_file(log_dir)
-        checkpoint = torch.load(log_dir)
-        model.load_state_dict(checkpoint['model'])
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        start_epoch = checkpoint['epoch']
+        ckpt = torch.load(log_dir, map_location=device)
+        model.load_state_dict(ckpt['model'], False)
+        optimizer.load_state_dict(ckpt['optimizer'])
+        start_epoch = ckpt['epoch']
 
     ite_num = 0
-    running_loss = 0.0  # total_loss = final_fusion_loss +sup1 +sup2 + sup3 + sup4 +sup5 +sup6
-    running_tar_loss = 0.0  # final_fusion_loss
+    running_loss = 0.0  # total_loss = fusion_loss
     t0 = time.time()
 
     for epoch in range(start_epoch, opt.epochs):
@@ -92,19 +123,21 @@ def main(opt):
             inputs, labels = input.to(device, non_blocking=True), label.to(device, non_blocking=True)
 
             # forward + backward + optimize
-            final_fusion_loss, sup1, sup2, sup3, sup4, sup5, sup6 = model(inputs)
-            final_fusion_loss_mblf, total_loss = XBCELoss(final_fusion_loss, sup1, sup2, sup3, sup4, sup5,
-                                                          sup6, labels)
+            fusion_loss = model(inputs)
+            loss = nn.BCELoss(reduction='mean')(fusion_loss, labels).cuda()
 
             # y zero the parameter gradients
             optimizer.zero_grad()
 
-            total_loss.backward()
+            if not opt.DDP:
+                loss.backward()
+            else:
+                with amp.scale_loss(loss, optimizer) as scaled_loss:
+                    scaled_loss.backward()
+
             optimizer.step()
 
-            # # print statistics
-            running_loss += total_loss.item()
-            running_tar_loss += final_fusion_loss_mblf.item()
+            running_loss += loss.item()
 
             # del temporary outputs and loss
             # del final_fusion_loss, sup1, sup2, sup3, sup4, sup5, sup6, final_fusion_loss_mblf, total_loss
@@ -117,9 +150,7 @@ def main(opt):
                 'Iteration: ',
                 ite_num,
                 'Total_loss: ',
-                running_loss / ite_num,
-                'Final_fusion_loss: ',
-                running_tar_loss / ite_num)
+                running_loss / ite_num)
             pbar.set_description(s)
 
         # The model is saved every 50 epoch
@@ -140,10 +171,13 @@ def main(opt):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=15000)
-    parser.add_argument('--batch-size', type=int, default=32, help='batch size')
-    parser.add_argument('--model-name', type=str, default='XNet', help='model')
+    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--batch-size', type=int, default=8, help='batch size')
+    parser.add_argument('--model-name', type=str, default='NUSNet', help='model')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
+    parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
+    parser.add_argument('--DDP', nargs='?', const=True, default=False, help='DDP mode')
+    parser.add_argument('--device', default='0, 1', help='device id (i.e. 0 or 0,1 or cpu)')
     parser.add_argument('--workers', type=int, default=0, help='maximum number of dataloader workers')
 
     opt = parser.parse_args()

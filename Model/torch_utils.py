@@ -41,20 +41,6 @@ def time_synchronized():
     return time.time()
 
 
-# final_fusion_loss is the sum of sup1 to sup6
-def XBCELoss(final_fusion_loss, sup1, sup2, sup3, sup4, sup5, sup6, labels_v):
-    final_fusion_loss = nn.BCELoss(reduction='mean')(final_fusion_loss, labels_v).cuda()
-    sup1 = nn.BCELoss(reduction='mean')(sup1, labels_v).cuda()
-    sup2 = nn.BCELoss(reduction='mean')(sup2, labels_v).cuda()
-    sup3 = nn.BCELoss(reduction='mean')(sup3, labels_v).cuda()
-    sup4 = nn.BCELoss(reduction='mean')(sup4, labels_v).cuda()
-    sup5 = nn.BCELoss(reduction='mean')(sup5, labels_v).cuda()
-    sup6 = nn.BCELoss(reduction='mean')(sup6, labels_v).cuda()
-    total_loss = (final_fusion_loss + sup1 + sup2 + sup3 + sup4 + sup5 + sup6).cuda()
-
-    return final_fusion_loss, total_loss
-
-
 # normalize the predicted SOD probability map
 def normPRED(d):
     ma = torch.max(d)

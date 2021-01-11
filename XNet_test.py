@@ -14,14 +14,14 @@ from tqdm import tqdm
 from Model.XNet import XNet
 from Model.data_loader import (Rescale, RescaleT, RandomCrop, ToTensor, ToTensorLab, SalObjDataset)
 from Model.torch_utils import (init_seeds, time_synchronized, XBCELoss, model_info, check_file, select_device,
-                               strip_optimizer)
+                               strip_optimizer, normPRED, save_output)
 
 logging.getLogger().setLevel(logging.INFO)
 
 
 # change gpus，model_name，pre_data_dir,  model, num_workers
 def main():
-    model_name = 'NUSNet'
+    model_name = 'XNet'
     pre_data_dir = 'SOD'  # 'TUDS-TE'   'PASCAL'   'HKU'
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
