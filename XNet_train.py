@@ -57,8 +57,8 @@ def main(opt):
 
         model = torch.nn.parallel.DistributedDataParallel(model, find_unused_parameters=True)
 
-    tra_image_dir = os.path.abspath(str(Path('Train_Data/TR-Image')))
-    tra_label_dir = os.path.abspath(str(Path('Train_Data/TR-Mask')))
+    tra_image_dir = os.path.abspath(str(Path('TrainData/TR-Image')))
+    tra_label_dir = os.path.abspath(str(Path('TrainData/TR-Mask')))
     saved_model_dir = os.path.join(os.getcwd(), 'SavedModels' + os.sep)
     log_dir = os.path.join(os.getcwd(), 'SavedModels', opt.model_name + '_Temp.pth')
 
