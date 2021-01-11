@@ -1,11 +1,20 @@
+import argparse
+import glob
 import logging
+import os
+import time
+from pathlib import Path
 
+import torch
+import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
+from tqdm import tqdm
 
-from NUSNet_model.NUSNet import *
-from data_loader import *
-from torch_utils import *
+from Model.XNet import XNet
+from Model.data_loader import (Rescale, RescaleT, RandomCrop, ToTensor, ToTensorLab, SalObjDataset)
+from Model.torch_utils import (init_seeds, time_synchronized, XBCELoss, model_info, check_file, select_device,
+                               strip_optimizer)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -18,7 +27,7 @@ def main():
 
     # Models : NUSNet  NUSNet4  NUSNet5  NUSNet6  NUSNet7  NUSNetCAM  NUSNetSAM  NUSNetCBAM
     # NUSNetNet765CAM4SMALLSAM
-    model = NUSNet(3, 1)    # input channels and output channels
+    model = XNet(3, 1)    # input channels and output channels
     model_info(model, verbose=True)
 
     model.to(device)

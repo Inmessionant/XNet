@@ -42,7 +42,7 @@ def time_synchronized():
 
 
 # final_fusion_loss is the sum of sup1 to sup6
-def muti_bce_loss_fusion(final_fusion_loss, sup1, sup2, sup3, sup4, sup5, sup6, labels_v):
+def XBCELoss(final_fusion_loss, sup1, sup2, sup3, sup4, sup5, sup6, labels_v):
     final_fusion_loss = nn.BCELoss(reduction='mean')(final_fusion_loss, labels_v).cuda()
     sup1 = nn.BCELoss(reduction='mean')(sup1, labels_v).cuda()
     sup2 = nn.BCELoss(reduction='mean')(sup2, labels_v).cuda()
