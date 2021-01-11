@@ -30,13 +30,13 @@ def main(opt):
     model.to(device).eval()
 
     dataset = os.path.join(os.getcwd(), 'TestData', dataset)  # Not end with /
-    inference = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
+    inferencedir = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
     weights = os.path.join(os.getcwd(), 'SavedModels', weight)
     ckptfile = os.path.join(os.getcwd(), 'SavedModels', model + '_Temp.pt')
     datalist = glob.glob(dataset + os.sep + '*')
 
-    if not os.path.exists(inference):
-        os.makedirs(inference, exist_ok=True)
+    if not os.path.exists(inferencedir):
+        os.makedirs(inferencedir, exist_ok=True)
 
     # optimizer
     if opt.adam:
@@ -75,9 +75,9 @@ def main(opt):
         pred = fusion_loss[:, 0, :, :]
         pred = normPRED(pred)
 
-        save_output(datalist[i_test], pred, inference)
+        save_output(datalist[i_test], pred, inferencedir)
 
-    logging.info('\n' + '%s is %f fps in the %s DataSet.' % (model, len(datalist) / time_sum, inference))
+    logging.info('\n' + '%s is %f fps in the %s DataSet.' % (model, len(datalist) / time_sum, inferencedir))
     print('Done. (%.3fs)' % (time.time() - t0))
     torch.cuda.empty_cache()
 
@@ -97,4 +97,3 @@ if __name__ == "__main__":
 
     with torch.no_grad():
         main(opt)
-        strip_optimizer(opt.weights)
