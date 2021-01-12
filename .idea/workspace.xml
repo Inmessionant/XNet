@@ -19,7 +19,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../YOLOv5" />
   </component>
   <component name="RunManager">
     <configuration name="XNet_train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -62,7 +62,7 @@
       <updated>1610332067755</updated>
       <workItem from="1610332076450" duration="4073000" />
       <workItem from="1610336350337" duration="346000" />
-      <workItem from="1610347094017" duration="10317000" />
+      <workItem from="1610347094017" duration="12119000" />
     </task>
     <servers />
   </component>
@@ -70,6 +70,10 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1610417507102">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610417507102" />
     <state width="1877" height="274" key="GridCell.Tab.0.bottom" timestamp="1610336697259">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

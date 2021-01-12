@@ -33,7 +33,7 @@ def main(opt):
     inferencedir = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
     weights = os.path.join(os.getcwd(), 'SavedModels', weight)
     ckptfile = os.path.join(os.getcwd(), 'SavedModels', model + '_Temp.pt')
-    datalist = glob.glob(dataset + os.sep + '*')
+    datalist = sorted(glob.glob(os.path.join(dataset, '*.*')))
 
     if not os.path.exists(inferencedir):
         os.makedirs(inferencedir, exist_ok=True)
