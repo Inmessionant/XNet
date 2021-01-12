@@ -113,14 +113,14 @@ def main(opt):
         for i, data in pbar:
             ite_num = ite_num + 1
 
-            input, label = data['image'].type(torch.FloatTensor).to(device, non_blocking=True), data['label'].type(torch.FloatTensor).to(device, non_blocking=True)
-
-            # y zero the parameter gradients
-            optimizer.zero_grad()
+            input, label = data['image'].type(torch.FloatTensor).to(device, non_blocking=True), data['label'].type(
+                torch.FloatTensor).to(device, non_blocking=True)
 
             # forward + backward + optimize
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
+
+            optimizer.zero_grad()
 
             if not opt.DDP:
                 loss.backward()
@@ -148,11 +148,11 @@ def main(opt):
 
         # The model is saved every 50 epoch
         if (epoch + 1) % 50 == 0:
-            state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(), 'epoch': epoch + 1}
+            state = {'model': model.module.state_dict(), 'optimizer': optimizer.state_dict(), 'epoch': epoch + 1}
             torch.save(state, saved_model_dir + opt.model_name + "_Temp.pt")
 
     file = saved_model_dir + opt.model_name + ".pt"
-    torch.save(model.state_dict(), file)
+    torch.save(model.module.state_dict(), file)
 
     # Strip optimizers
     if os.path.exists(file) and str(file).endswith('.pt'):
