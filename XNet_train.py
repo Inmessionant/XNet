@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
 
-from Model.Net import Net
+from Model.XNet import XNet
 from Model.data_loader import (RescaleT, RandomCrop, ToTensorLab, SODDataset)
 from Model.torch_utils import (init_seeds, model_info, check_file)
 
@@ -22,7 +22,7 @@ def main(opt):
     init_seeds(2 + opt.batch_size)
 
     # Define Model
-    model = Net(3, 1)  # input channels and output channels
+    model = XNet(3, 1)  # input channels and output channels
     model_info(model, verbose=True)  # logging.info(summary(model, (3, 320, 320)))
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model.to(device)
