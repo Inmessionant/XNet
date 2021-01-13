@@ -2,54 +2,47 @@ import argparse
 import glob
 import logging
 import os
-import shutil
 import time
-from pathlib import Path
 
 import torch
 import torch.optim as optim
-from torch.cuda import amp
-import torch.distributed as dist
+
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from Model.XNet import XNet
+from Model.Net import Net
 from Model.data_loader import (RescaleT, ToTensorLab, SODDataset)
-from Model.torch_utils import (time_synchronized, model_info, check_file, select_device, strip_optimizer, normPRED,
-                               save_output)
+from Model.torch_utils import (time_synchronized, check_file, normPRED, save_output)
 
 logging.getLogger().setLevel(logging.INFO)
 
 
 def main(opt):
-    out, dataset, weight, model = opt.save_dir, opt.dataset, opt.weights, opt.model
-
-    device = select_device(opt.device)
-
-    model = XNet(3, 1)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    model = Net(3, 1)
     model.to(device).eval()
 
-    dataset = os.path.join(os.getcwd(), 'TestData', dataset)  # Not end with /
-    inferencedir = os.path.join(os.getcwd(), out, dataset + '_Results', os.sep)
-    weights = os.path.join(os.getcwd(), 'SavedModels', weight)
-    ckptfile = os.path.join(os.getcwd(), 'SavedModels', model + '_Temp.pt')
-    datalist = sorted(glob.glob(os.path.join(dataset, '*.*')))
+    datasets = os.path.join(os.getcwd(), 'TestData', opt.dataset)
+    inferencedir = os.path.join(os.getcwd(), opt.save_dir, opt.dataset + '_Results', os.sep)
+    weights = os.path.join(os.getcwd(), 'SavedModels', 'XNet.pt')
+    Ckpt = os.path.join(os.getcwd(), 'SavedModels', 'XNet_Temp.pt')
+    datalist = sorted(glob.glob(os.path.join(datasets, '*.*')))
 
     if not os.path.exists(inferencedir):
         os.makedirs(inferencedir, exist_ok=True)
 
     # optimizer
-    if opt.adam:
-        optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
-    else:
+    if opt.SGD:
         optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+    else:
+        optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
 
     if opt.resume:
-        ckpt = torch.load(ckptfile, map_location=device) if check_file(ckptfile) else None
+        ckpt = torch.load(Ckpt, map_location=device) if check_file(Ckpt) else None
         model.load_state_dict(ckpt['model'])
         optimizer.load_state_dict(ckpt['optimizer'])
     else:
-        model.load_state_dict(torch.load(weights))
+        model.load_state_dict(torch.load(weights), strict=False)
 
     # dataloader
     TestSODDataSet = SODDataset(img_name_list=datalist, lbl_name_list=[],
@@ -66,15 +59,16 @@ def main(opt):
 
         input = data_test['image'].type(torch.FloatTensor).to(device, non_blocking=True)
 
-        start = time_synchronized()
-        fusion_loss = model(input)
-        time_sum += time_synchronized() - start
+        with torch.no_grad():
+            start = time_synchronized()
+            fusion_loss = model(input)
+            time_sum += time_synchronized() - start
 
-        # normalization
-        pred = fusion_loss[:, 0, :, :]
-        pred = normPRED(pred)
+            # normalization
+            pred = fusion_loss[:, 0, :, :]
+            pred = normPRED(pred)
 
-        save_output(datalist[i_test], pred, inferencedir)
+            save_output(datalist[i_test], pred, inferencedir)
 
     logging.info('\n' + '%s is %f fps in the %s DataSet.' % (model, len(datalist) / time_sum, inferencedir))
     print('Done. (%.3fs)' % (time.time() - t0))
@@ -83,16 +77,12 @@ def main(opt):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', nargs='+', type=str, default='XNet', help='XNet')
-    parser.add_argument('--weights', nargs='+', type=str, default='XNet.pt', help='model.pt path(s)')
-    parser.add_argument('--device', default='', help='device id (i.e. 0 or 0,1 or cpu)')
     parser.add_argument('--dataset', type=str, default='SOD', help='TUDS-TE PASCAL HKU')
     parser.add_argument('--save-dir', type=str, default='Inference', help='directory to save results')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='most recent training Model')
-    parser.add_argument('--adam', nargs='?', const=True, default=False, help='use torch.optim.Adam() optimizer')
+    parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
     parser.add_argument('--workers', type=int, default=0, help='maximum number of dataloader workers')
     opt = parser.parse_args()
     print(opt)
 
-    with torch.no_grad():
-        main(opt)
+    main(opt)
