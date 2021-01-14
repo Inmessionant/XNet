@@ -21,10 +21,12 @@ logging.getLogger().setLevel(logging.INFO)
 def main(opt):
     init_seeds(2 + opt.batch_size)
 
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # Define Model
     model = XNet(3, 1)  # input channels and output channels
     model_info(model, verbose=True)  # logging.info(summary(model, (3, 320, 320)))
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
     model.to(device)
 
     # optimizer
@@ -33,39 +35,38 @@ def main(opt):
     else:
         optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
 
-    TRImage = os.path.join(os.getcwd(), 'TrainData', 'TR-Image')
-    TRMask = os.path.join(os.getcwd(), 'TrainData', 'TR-Mask')
-    SavedModels = os.path.join(os.getcwd(), 'SavedModels' + os.sep)
-    Ckpt = os.path.join(os.getcwd(), 'SavedModels', 'XNet_Temp.pt')
+    train_image_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Image')
+    train_label_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Mask')
+    saved_model_dir = os.path.join(os.getcwd(), 'SavedModels' + os.sep)
+    checkfile = os.path.join(os.getcwd(), 'SavedModels', opt.model_name + '_Temp.pt')
 
-    if not os.path.exists(SavedModels):
-        os.makedirs(SavedModels, exist_ok=True)
+    if not os.path.exists(saved_model_dir): os.makedirs(saved_model_dir, exist_ok=True)
 
     img_formats = ['.bmp', '.jpg', '.jpeg', '.png', '.tif', '.tiff', '.dng']
 
-    Images_Files = sorted(glob.glob(os.path.join(TRImage, '*.*')))
-    Labels_Files = sorted(glob.glob(os.path.join(TRMask, '*.*')))
+    train_image_files = sorted(glob.glob(os.path.join(train_image_dir, '*.*')))
+    train_label_files = sorted(glob.glob(os.path.join(train_label_dir, '*.*')))
 
-    TRImage_list = [x for x in Images_Files if os.path.splitext(x)[-1].lower() in img_formats]
-    TRMask_list = [x for x in Labels_Files if os.path.splitext(x)[-1].lower() in img_formats]
+    train_image_list = [x for x in train_image_files if os.path.splitext(x)[-1].lower() in img_formats]
+    train_label_list = [x for x in train_label_files if os.path.splitext(x)[-1].lower() in img_formats]
 
-    logging.info('Train Images Numbers: %g' % len(TRImage_list))
-    logging.info('Train Labels Numbers: %g' % len(TRMask_list))
+    logging.info('Train Images Numbers: %g' % len(train_image_list))
+    logging.info('Train Labels Numbers: %g' % len(train_label_list))
 
-    assert len(TRImage_list) == len(
-        TRMask_list), 'The number of training images: %g the number of training labels: %g .' % (
-        len(TRImage_list), len(TRMask_list))
+    assert len(train_image_list) == len(
+        train_label_list), 'The number of training images: %g the number of training labels: %g .' % (
+        len(train_image_list), len(train_label_list))
+
+    train_dataset = SODDataset(img_name_list=train_image_list, lbl_name_list=train_label_list,
+                               transform=transforms.Compose(
+                                   [RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
+    train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
+                              pin_memory=True)
 
     start_epoch = 0
 
-    salobj_dataset = SODDataset(img_name_list=TRImage_list, lbl_name_list=TRMask_list,
-                                transform=transforms.Compose(
-                                    [RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
-    salobj_dataloader = DataLoader(salobj_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
-                                   pin_memory=True)
-
     if opt.resume:
-        ckpt = torch.load(Ckpt, map_location=device) if check_file(Ckpt) else None
+        ckpt = torch.load(check_file(checkfile), map_location=device)
         model.load_state_dict(ckpt['model'])
         optimizer.load_state_dict(ckpt['optimizer'])
         start_epoch = ckpt['epoch']
@@ -78,8 +79,8 @@ def main(opt):
 
         model.train()
 
-        pbar = enumerate(salobj_dataloader)
-        pbar = tqdm(pbar, total=len(salobj_dataloader))
+        pbar = enumerate(train_loader)
+        pbar = tqdm(pbar, total=len(train_loader))
 
         for i, data in pbar:
             ite_num = ite_num + 1
@@ -91,17 +92,17 @@ def main(opt):
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
 
-            running_loss += loss.item()
-
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
+            running_loss += loss.item()
 
             s = ('%15s' + '%-15s' + '%15s' + '%-15s' + '%15s' + '%-15d' + '%15s' + '%-15.4f') % (
                 'Epoch: ',
                 '%g/%g' % (epoch + 1, opt.epochs),
                 'Batch: ',
-                '%g/%g' % ((i + 1) * opt.batch_size, len(TRImage_list)),
+                '%g/%g' % ((i + 1) * opt.batch_size, len(train_image_list)),
                 'Iteration: ',
                 ite_num,
                 'Loss: ',
@@ -109,23 +110,23 @@ def main(opt):
             pbar.set_description(s)
 
         # The model is saved every 50 epoch
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 50 == 0:
             state = {'model': model.state_dict(), 'optimizer': optimizer.state_dict(), 'epoch': epoch + 1}
-            torch.save(state, SavedModels + "XNet_Temp.pt")
+            torch.save(state, saved_model_dir + opt.model_name + "_Temp.pt")
 
-    torch.save(model.state_dict(), SavedModels + "XNet.pt")
-
+    torch.save(model.state_dict(), saved_model_dir + opt.model_name + ".pt")
     logging.info('%g epochs completed in %.3f hours.\n' % (opt.epochs - start_epoch + 1, (time.time() - t0) / 3600))
     torch.cuda.empty_cache()
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=20)
-    parser.add_argument('--batch-size', type=int, default=8, help='batch size')
+    parser.add_argument('--epochs', type=int, default=3000, help='total epochs')
+    parser.add_argument('--batch-size', type=int, default=32, help='batch size')
+    parser.add_argument('--model-name', type=str, default='XNet', help='define model name')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
     parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
-    parser.add_argument('--workers', type=int, default=0, help='maximum number of dataloader workers')
+    parser.add_argument('--workers', type=int, default=8, help='maximum number of dataloader workers')
     opt = parser.parse_args()
     print(opt)
 
