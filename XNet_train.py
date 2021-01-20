@@ -89,10 +89,11 @@ def main(opt):
                 torch.FloatTensor).to(device, non_blocking=True)
 
             # forward + backward + optimize
+            optimizer.zero_grad()
+
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
 
-            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
