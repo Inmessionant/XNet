@@ -36,11 +36,6 @@ def init_seeds(seed=0):
     init_torch_seeds(seed)
 
 
-def time_synchronized():
-    torch.cuda.synchronize() if torch.cuda.is_available() else None
-    return time.time()
-
-
 # normalize the predicted SOD probability map
 def normPRED(d):
     ma = torch.max(d)
@@ -177,7 +172,7 @@ def select_device(device='', apex=False, batch_size=None):
     return torch.device('cuda:0' if cuda else 'cpu')
 
 
-def strip_optimizer(f='weights/best.pt', s=''):  # from utils.general import *; strip_optimizer()
+def strip_optimizer(f='SavedModels/XNet.pt', s=''):  # from utils.general import *; strip_optimizer()
     # Strip optimizer from 'f' to finalize training, optionally save as 's'
     x = torch.load(f, map_location=torch.device('cpu'))
     x['optimizer'] = None
