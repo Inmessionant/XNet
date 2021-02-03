@@ -61,7 +61,7 @@ def main(opt):
                                transform=transforms.Compose(
                                    [RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
     train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
-                              pin_memory=True)
+                              pin_memory=True, prefetch_factor=2)  # prefetch works when pin_memory > 0
 
     start_epoch = 0
 
