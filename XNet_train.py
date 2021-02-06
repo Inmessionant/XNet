@@ -7,6 +7,7 @@ import time
 import torch
 import torch.optim as optim
 from torch import nn
+from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
@@ -34,6 +35,8 @@ def main(opt):
         optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
     else:
         optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
+    
+    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
 
     train_image_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Image')
     train_label_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Mask')
@@ -93,9 +96,10 @@ def main(opt):
 
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
-
+            
+            scheduler.step(loss)
             loss.backward()
-            optimizer.step()
+            optimizer.step()    
 
             running_loss += loss.item()
 

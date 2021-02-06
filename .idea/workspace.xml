@@ -10,13 +10,14 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JupyterTrust" id="1b620526-f200-48d8-9d5d-b07aee263b5d" />
   <component name="ProjectId" id="1mu8MXLGWfIzlqJHXVDIg2F2K5v" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -74,6 +75,7 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -94,13 +96,18 @@
       <workItem from="1610587917122" duration="1171000" />
       <workItem from="1610590057788" duration="4078000" />
       <workItem from="1610784272799" duration="1012000" />
+      <workItem from="1612440491574" duration="438000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="184" y="79" width="1071" height="706" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612440908156">
+      <screen x="0" y="25" width="1440" height="790" />
+    </state>
+    <state x="184" y="79" width="1071" height="706" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.790@0.25.1440.790" timestamp="1612440908156" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1610417507102">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -137,10 +144,11 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="338" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610589088629" />
-    <state x="461" y="162" key="SettingsEditor" timestamp="1610593739186">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="346" y="87" key="SettingsEditor" timestamp="1612440542959">
+      <screen x="0" y="25" width="1440" height="790" />
     </state>
     <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610593739186" />
+    <state x="346" y="87" key="SettingsEditor/0.25.1440.790@0.25.1440.790" timestamp="1612440542959" />
     <state x="-1827" y="0" width="1649" height="999" maximized="true" key="dock-window-1" timestamp="1610524192462">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
