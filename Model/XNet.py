@@ -17,6 +17,24 @@ from Model.torch_utils import Conv2dStaticSamePadding, MaxPool2dStaticSamePaddin
 # nn.Conv2d(inplanes, inplanes, kernel_size=3, padding=1, dilation=1, bias=False) 不改变原尺寸
 
 
+class SELayer(nn.Module):
+    def __init__(self, channel, reduction=16):
+        super(SELayer, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel, bias=False),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _, _ = x.size()
+        y = self.avg_pool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1, 1)
+        return x * y.expand_as(x)
+
+    
 class conv(nn.Module):
     def __init__(self, in_channels, out_channels):  # 保证gn中能整除16，实验证明一组16通道比较好
         super(conv, self).__init__()
