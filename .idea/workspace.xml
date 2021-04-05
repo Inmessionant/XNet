@@ -28,9 +28,32 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.XNet">
+    <configuration name="1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="XNet" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="XNet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="XNet" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -45,50 +68,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Model/XNet.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="XNet_test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="XNet" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/XNet_test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="XNet_train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="XNet" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/XNet_train.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -119,12 +98,51 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="xml2json" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="XNet" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/xml2json.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest in 1.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="XNet" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/1.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.XNet" />
-        <item itemvalue="Python.XNet_test" />
-        <item itemvalue="Python.XNet_train" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.xml2json" />
+        <item itemvalue="Python.1" />
+        <item itemvalue="Python tests.pytest in 1.py" />
       </list>
     </recent_temporary>
   </component>
@@ -152,6 +170,20 @@
       <workItem from="1612440491574" duration="438000" />
       <workItem from="1614648566833" duration="24111000" />
       <workItem from="1614912952374" duration="728000" />
+      <workItem from="1616043171611" duration="46000" />
+      <workItem from="1616468166003" duration="15000" />
+      <workItem from="1616640968305" duration="1613000" />
+      <workItem from="1616907487547" duration="8000" />
+      <workItem from="1617000575032" duration="2884000" />
+      <workItem from="1617004651146" duration="1447000" />
+      <workItem from="1617016195812" duration="3330000" />
+      <workItem from="1617075614214" duration="1716000" />
+      <workItem from="1617103593992" duration="491000" />
+      <workItem from="1617264789699" duration="2924000" />
+      <workItem from="1617279373189" duration="3036000" />
+      <workItem from="1617339909731" duration="764000" />
+      <workItem from="1617340724374" duration="300000" />
+      <workItem from="1617594263005" duration="9060000" />
     </task>
     <servers />
   </component>
@@ -167,47 +199,59 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610417507102" />
-    <state width="1877" height="270" key="GridCell.Tab.0.bottom" timestamp="1614913697509">
+    <state width="1877" height="337" key="GridCell.Tab.0.bottom" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="270" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697509" />
-    <state width="1877" height="270" key="GridCell.Tab.0.center" timestamp="1614913697509">
+    <state width="1877" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
+    <state width="1877" height="337" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.0.center" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="270" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697509" />
-    <state width="1877" height="270" key="GridCell.Tab.0.left" timestamp="1614913697509">
+    <state width="1877" height="266" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
+    <state width="1877" height="337" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.0.left" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="270" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697509" />
-    <state width="1877" height="270" key="GridCell.Tab.0.right" timestamp="1614913697509">
+    <state width="1877" height="266" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
+    <state width="1877" height="337" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.0.right" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="270" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697509" />
-    <state width="1877" height="338" key="GridCell.Tab.1.bottom" timestamp="1614913697506">
+    <state width="1877" height="266" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
+    <state width="1877" height="337" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.1.bottom" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="338" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697506" />
-    <state width="1877" height="338" key="GridCell.Tab.1.center" timestamp="1614913697506">
+    <state width="1860" height="334" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617019546035" />
+    <state width="1877" height="337" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.1.center" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="338" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697506" />
-    <state width="1877" height="338" key="GridCell.Tab.1.left" timestamp="1614913697506">
+    <state width="1860" height="334" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617019546035" />
+    <state width="1877" height="337" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.1.left" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="338" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697506" />
-    <state width="1877" height="338" key="GridCell.Tab.1.right" timestamp="1614913697506">
+    <state width="1860" height="334" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617019546035" />
+    <state width="1877" height="337" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
+    <state width="1877" height="337" key="GridCell.Tab.1.right" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="338" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614913697506" />
+    <state width="1860" height="334" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617019546035" />
+    <state width="1877" height="337" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617610580463" />
     <state x="346" y="87" key="SettingsEditor" timestamp="1612440542959">
       <screen x="0" y="25" width="1440" height="790" />
     </state>
     <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610593739186" />
     <state x="346" y="87" key="SettingsEditor/0.25.1440.790@0.25.1440.790" timestamp="1612440542959" />
-    <state x="-1827" y="0" width="1649" height="999" maximized="true" key="dock-window-1" timestamp="1610524192462">
+    <state x="511" y="256" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1617609195083">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="511" y="256" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617609195083" />
+    <state x="-1736" y="1" width="1614" height="999" key="dock-window-1" timestamp="1617016214235">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
-    <state x="-1827" y="0" width="1649" height="999" maximized="true" key="dock-window-1/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610524192462" />
+    <state x="-1736" y="1" width="1614" height="999" key="dock-window-1/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617016214235" />
     <state x="-1920" y="0" width="1598" height="999" maximized="true" key="dock-window-2" timestamp="1610335098831">
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
@@ -217,10 +261,24 @@
     </state>
     <state x="701" y="162" key="refactoring.ChangeSignatureDialog/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1614666151061" />
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/XNet_train_py$XNet.coverage" NAME="XNet Coverage Results" MODIFIED="1614686939069" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Model" />
-    <SUITE FILE_PATH="coverage/XNet_train_py$test.coverage" NAME="test Coverage Results" MODIFIED="1614913123503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$pytest_in_1_py.coverage" NAME="pytest in 1.py Coverage Results" MODIFIED="1617018081139" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$XNet.coverage" NAME="XNet Coverage Results" MODIFIED="1617610131528" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Model" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$1.coverage" NAME="1 Coverage Results" MODIFIED="1617019323510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$test.coverage" NAME="test Coverage Results" MODIFIED="1617340930005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/XNet$XNet_test.coverage" NAME="XNet_test Coverage Results" MODIFIED="1610594225716" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$xml2json.coverage" NAME="xml2json Coverage Results" MODIFIED="1617075852308" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/XNet$XNet_train.coverage" NAME="XNet_train Coverage Results" MODIFIED="1610594106443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
