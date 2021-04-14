@@ -1,4 +1,6 @@
 import torch
+from torchviz import make_dot
+import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 from torchsummary import summary
@@ -192,6 +194,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
 print(summary(model, (128, 80, 80)))
 
+
 # # torchstat
 # model = XNet()
 # print(stat(model, (3, 320, 320)))
+
+
+# pytorchviz
+model = BasicBlock(128, 128, 256)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
+x = torch.randn(1, 128, 80, 80).requires_grad_(True)
+y = model(x)
+vis_graph = make_dot(y, params=dict(list(model.named_parameters()) + [('x', x)]))
+vis_graph.view()
