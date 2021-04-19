@@ -97,103 +97,106 @@ class BasicBlock(nn.Module):
 
 
 class XNet(nn.Module):
-
     def __init__(self, in_channels=3, out_channels=1):
         super(XNet, self).__init__()
+
         self.upsample = nn.UpsamplingBilinear2d(scale_factor=2)
+        self.upsample2 = nn.UpsamplingBilinear2d(scale_factor=4)
         self.pooling = MaxPool2dStaticSamePadding(3, 2)
 
-        self.conv = conv(in_channels=in_channels, out_channels=32)
+        self.conv1 = conv(in_channels=in_channels, out_channels=32)
 
-        self.m11 = BasicBlock(32, 32, 64)
-        self.m12 = BasicBlock(64, 64, 128)
-        self.m13 = BasicBlock(128, 128, 256)
-        self.m14 = BasicBlock(256, 256, 512)
-        self.m15 = BasicBlock(512, 512, 512)
+        self.x11 = BasicBlock(32, 32, 64)
+        self.x12 = BasicBlock(64, 64, 128)
+        self.x13 = BasicBlock(128, 128, 256)
 
-        self.m24 = BasicBlock(1024, 512, 256)
-        self.m23 = BasicBlock(512, 256, 128)
-        self.m22 = BasicBlock(256, 128, 64)
+        self.x22pre = nn.Conv2d(384, 256, kernel_size=1)
+        self.x22 = BasicBlock(256, 256, 256)
 
-        self.m31 = BasicBlock(128, 64, 128)
-        self.m32 = BasicBlock(320, 160, 320)
-        self.m33 = BasicBlock(704, 352, 704)
-        self.m34 = BasicBlock(1472, 736, 1472)
-        self.m35 = BasicBlock(1984, 992, 1984)
+        self.x31pre = nn.Conv2d(320, 256, kernel_size=1)
+        self.x31 = BasicBlock(256, 256, 256)
 
-        self.conv1 = nn.Conv2d(128, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.conv2 = nn.Conv2d(320, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.conv3 = nn.Conv2d(704, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.conv4 = nn.Conv2d(1472, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.conv5 = nn.Conv2d(1984, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.x32pre = nn.Conv2d(640, 256, kernel_size=1)
+        self.x32 = BasicBlock(256, 256, 256)
 
-        self.fusion = nn.Conv2d(5, 1, kernel_size=3, stride=1, padding=1, bias=False)
+        self.x33pre = nn.Conv2d(512, 256, kernel_size=1)
+        self.x33 = BasicBlock(256, 256, 256)
+
+        self.x42pre = nn.Conv2d(512, 256, kernel_size=1)
+        self.x42 = BasicBlock(256, 256, 256)
+
+        self.x51pre = nn.Conv2d(512, 32, kernel_size=1)
+        self.x51 = BasicBlock(32, 32, 64)
+
+        self.x52pre = nn.Conv2d(576, 64, kernel_size=1)
+        self.x52 = BasicBlock(64, 64, 128)
+
+        self.x53pre = nn.Conv2d(384, 128, kernel_size=1)
+        self.x53 = BasicBlock(128, 128, 256)
+
+        self.convx1 = nn.Conv2d(64, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.convx2 = nn.Conv2d(128, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+        self.convx3 = nn.Conv2d(256, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
+
+        self.fusion = nn.Conv2d(3, 1, kernel_size=3, stride=1, padding=1, bias=False)
 
     def forward(self, x):
-        conv1 = self.conv(x)
+        conv1 = self.conv1(x)
 
-        x11 = self.m11(conv1)
+        x11 = self.x11(conv1)
         x11B = x11
-        print(x11.shape)
 
-        x12 = self.m12(self.pooling(x11))
-        x12A, x12B = x12, x12
-        print(x12.shape)
+        x12 = self.x12(self.pooling(x11))
+        x12A, x12B = x12.clone(), x12.clone()
 
-        x13 = self.m13(self.pooling(x12))
-        x13A, x13B = x13, x13
+        x13 = self.x13(self.pooling(x12))
+        x13B = x13.clone()
+
+        x22pre = self.x22pre(torch.cat((x12A, self.upsample(x13)), 1))
+        x22 = self.x22(x22pre)
+        x22A = x22.clone()
+
+        x31pre = self.x31pre(torch.cat((x11B, self.upsample(x22)), 1))
+        x31 = self.x31(x31pre)
+        x31B = x31.clone()
+
+        x32pre = self.x32pre(torch.cat((x22A, x12B, self.pooling(x31)), 1))
+        x32 = self.x32(x32pre)
+        x32A, x32B = x32.clone(), x32.clone()
+        print(x32.shape)
         print(x13.shape)
-        print(self.pooling(x13).shape)
 
-        x14 = self.m14(self.pooling(x13))
-        x14A, x14B = x14, x14
-        print(x14.shape)
+        x33pre = self.x33pre(torch.cat((x13B, self.pooling(x32)), 1))
+        x33 = self.x33(x33pre)
+        x33B = x33.clone()
 
-        x15 = self.m15(self.pooling(x14))
-        x15B = x15
+        x42pre = self.x42pre(torch.cat((x32A, self.upsample(x33)), 1))
+        x42 = self.x42(x42pre)
+        x42A = x42.clone()
 
-        x24 = self.m24(torch.cat((x14B, self.upsample(x15)), 1))
-        x24A = x24
+        x51pre = self.x51pre(torch.cat((x31B, self.upsample(x42)), 1))
+        x51 = self.x51(x51pre)
 
-        x23 = self.m23(torch.cat((x13A, self.upsample(x24)), 1))
-        x23A = x23
+        x52pre = self.x52pre(torch.cat((x42A, x32B, self.pooling(x51)), 1))
+        x52 = self.x52(x52pre)
 
-        x22 = self.m22(torch.cat((x12A, self.upsample(x23)), 1))
-        x22A = x22
+        x53pre = self.x53pre(torch.cat((x33B, self.pooling(x52)), 1))
+        x53 = self.x53(x53pre)
 
-        x31 = self.m31(torch.cat((x11B, self.upsample(x22)), 1))
+        out1 = self.convx1(x51)
+        out2 = self.upsample(self.convx2(x52))
+        out3 = self.upsample2(self.convx3(x53))
 
-        x32 = self.m32(torch.cat((x22A, x12B, self.pooling(x31)), 1))
-
-        x33 = self.m33(torch.cat((x23A, x13B, self.pooling(x32)), 1))
-
-        x34 = self.m34(torch.cat((x24A, x14B, self.pooling(x33)), 1))
-
-        x35 = self.m35(torch.cat((x15B, self.pooling(x34)), 1))
-
-        out1 = self.conv1(x31)
-
-        out2 = _upsample_like(self.conv2(x32), out1)
-
-        out3 = _upsample_like(self.conv2(x33), out1)
-
-        out4 = _upsample_like(self.conv2(x34), out1)
-
-        out5 = _upsample_like(self.conv2(x35), out1)
-
-        fusion = self.fusion(torch.cat((out1, out2, out3, out4, out5), 1))
+        fusion = self.fusion(torch.cat((out1, out2, out3), 1))
 
         return F.sigmoid(fusion)
 
 
-# Bug ,BasicBlock最小支持输入尺寸为80，所以得改XNet网络深度
-
 # torchsummary
-model = BasicBlock(128, 128, 256)
+model = XNet()
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model = model.to(device)
-print(summary(model, (128, 80, 80)))
-
+print(summary(model, (3, 320, 320)))
 
 # # torchstat
 # model = XNet()
@@ -201,11 +204,11 @@ print(summary(model, (128, 80, 80)))
 
 
 # pytorchviz
-model = BasicBlock(128, 128, 256)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = model.to(device)
+# model = BasicBlock(128, 128, 256)
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# model = model.to(device)
 
-x = torch.randn(1, 128, 80, 80).requires_grad_(True)
-y = model(x)
-vis_graph = make_dot(y, params=dict(list(model.named_parameters()) + [('x', x)]))
-vis_graph.view()
+# x = torch.randn(1, 128, 80, 80).requires_grad_(True)
+# y = model(x)
+# vis_graph = make_dot(y, params=dict(list(model.named_parameters()) + [('x', x)]))
+# vis_graph.view()
