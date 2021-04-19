@@ -126,7 +126,7 @@ def main(opt):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--epochs', type=int, default=3000, help='total epochs')
+    parser.add_argument('--epochs', type=int, default=500, help='total epochs')
     parser.add_argument('--batch-size', type=int, default=32, help='batch size')
     parser.add_argument('--model-name', type=str, default='XNet', help='define model name')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
