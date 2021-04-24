@@ -10,7 +10,6 @@ Work done recently for salient object detection
 ```
 1.init_seeds(2 + opt.batch_size)
 2.使用model_info(model, verbose=True)代替logging.info(summary(model, (3, 320, 320)))
-3.optim.SGD()代替optim.Adam()
 4.添加tqdm和pbar显示训练进度条
 5.解决训练时显存抖动
 7.使用argparse.ArgumentParser()

@@ -31,12 +31,12 @@ def main(opt):
     model.to(device)
 
     # optimizer
-    if opt.SGD:
-        optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
-    else:
-        optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
+    # if opt.SGD:
+    #     optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+    # else:
+    optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
     
-    scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+    # scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
 
     train_image_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Image')
     train_label_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Mask')
@@ -97,7 +97,7 @@ def main(opt):
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
             
-            scheduler.step(loss)
+            # scheduler.step(loss)
             loss.backward()
             optimizer.step()    
 
@@ -130,8 +130,8 @@ if __name__ == "__main__":
     parser.add_argument('--batch-size', type=int, default=32, help='batch size')
     parser.add_argument('--model-name', type=str, default='XNet', help='define model name')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
-    parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
-    parser.add_argument('--workers', type=int, default=8, help='maximum number of dataloader workers')
+    # parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
+    parser.add_argument('--workers', type=int, default=4, help='maximum number of dataloader workers')
     opt = parser.parse_args()
     print(opt)
 
