@@ -30,14 +30,6 @@ def main(opt):
 
     model.to(device)
 
-    # optimizer
-    # if opt.SGD:
-    #     optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
-    # else:
-    optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
-    
-    # scheduler = lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
-
     train_image_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Image')
     train_label_dir = os.path.join(os.getcwd(), 'TrainData', 'TR-Mask')
     saved_model_dir = os.path.join(os.getcwd(), 'SavedModels' + os.sep)
@@ -65,6 +57,13 @@ def main(opt):
                                    [RescaleT(320), RandomCrop(288), ToTensorLab(flag=0)]))
     train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=opt.workers,
                               pin_memory=True, prefetch_factor=2)  # prefetch works when pin_memory > 0
+    # optimizer
+    # if opt.SGD:
+    #     optimizer = optim.SGD(model.parameters(), lr=1e-2, momentum=0.9, nesterov=True)
+    # else:
+    optimizer = optim.AdamW(model.parameters(), lr=3e-4, betas=(0.9, 0.999), eps=1e-8, weight_decay=0)
+
+    scheduler = lr_scheduler.OneCycleLR(optimizer, max_lr=0.001, steps_per_epoch=len(train_loader), epochs=opt.epochs)  # max_lr
 
     start_epoch = 0
 
@@ -74,7 +73,7 @@ def main(opt):
         optimizer.load_state_dict(ckpt['optimizer'])
         start_epoch = ckpt['epoch']
 
-    ite_num = 0
+    ite_num = 0.0
     running_loss = 0.0  # total_loss = fusion_loss
     t0 = time.time()
 
@@ -96,10 +95,10 @@ def main(opt):
 
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
-            
-            # scheduler.step(loss)
+
             loss.backward()
-            optimizer.step()    
+            optimizer.step()
+            scheduler.step()
 
             running_loss += loss.item()
 
