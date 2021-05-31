@@ -17,5 +17,6 @@ Work done recently for salient object detection
 9.训练时显示已用时间，测试时显示数据集名称、FPS、保存路径；
 10.optimizer.zero_grad()
 11.使用AdamW + OneCycleLR
+12. 梯度累积accumulation_steps = 
 ```
 

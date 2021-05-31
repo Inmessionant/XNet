@@ -73,6 +73,8 @@ def main(opt):
         optimizer.load_state_dict(ckpt['optimizer'])
         start_epoch = ckpt['epoch']
 
+    batch_size = 64
+    accumulation_steps = batch_size // opt.batch_size
     ite_num = 0.0
     running_loss = 0.0  # total_loss = fusion_loss
     t0 = time.time()
@@ -91,16 +93,18 @@ def main(opt):
                 torch.FloatTensor).to(device, non_blocking=True)
 
             # forward + backward + optimize
-            optimizer.zero_grad()
+            # optimizer.zero_grad()
 
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
-
+            loss = loss / accumulation_steps
             loss.backward()
-            optimizer.step()
-            scheduler.step()
-
             running_loss += loss.item()
+
+            if ((i + 1) % accumulation_steps) == 0:
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad()
 
             s = ('%15s' + '%-15s' + '%15s' + '%-15s' + '%15s' + '%-15d' + '%15s' + '%-15.4f') % (
                 'Epoch: ',
@@ -126,7 +130,7 @@ def main(opt):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', type=int, default=500, help='total epochs')
-    parser.add_argument('--batch-size', type=int, default=32, help='batch size')
+    parser.add_argument('--batch-size', type=int, default=8, help='batch size, 必须能被64整除，使用了累积梯度')
     parser.add_argument('--model-name', type=str, default='XNet', help='define model name')
     parser.add_argument('--resume', nargs='?', const=True, default=False, help='resume most recent training')
     # parser.add_argument('--SGD', nargs='?', const=True, default=True, help='SGD/ Adam optimizer, default SGD')
