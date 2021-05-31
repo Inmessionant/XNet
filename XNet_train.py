@@ -98,8 +98,8 @@ def main(opt):
             fusion_loss = model(input)
             loss = nn.BCELoss(reduction='mean')(fusion_loss, label).cuda()
             loss = loss / accumulation_steps
-            loss.backward()
             running_loss += loss.item()
+            loss.backward()
 
             if ((i + 1) % accumulation_steps) == 0:
                 optimizer.step()
