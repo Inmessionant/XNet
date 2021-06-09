@@ -67,22 +67,22 @@ class BasicBlock(nn.Module):
         x = self.pointwise_conv_in2mid(x)
 
         p3_0 = self.conv_1(x)
-        p3_0b = p3_0
+        p3_0b = p3_0.clone()
         p4_0 = self.conv_1(self.pooling(p3_0))
-        p4_0a, p4_0b = p4_0, p4_0
+        p4_0a, p4_0b = p4_0.clone(), p4_0.clone()
         p5_0 = self.conv_1(self.pooling(p4_0))
-        p5_0a, p5_0b = p5_0, p5_0
+        p5_0a, p5_0b = p5_0.clone(), p5_0.clone()
         p6_0 = self.conv_1(self.pooling(p5_0))
-        p6_0a, p6_0b = p6_0, p6_0
+        p6_0a, p6_0b = p6_0.clone(), p6_0.clone()
         p7_0 = self.conv_1(self.pooling(p6_0))
-        p7_0b = p7_0
+        p7_0b = p7_0.clone()
 
         p6_1 = self.conv_2(torch.cat((p6_0a, self.upsample(p7_0)), 1))
-        p6_1a = p6_1
+        p6_1a = p6_1.clone()
         p5_1 = self.conv_2(torch.cat((p5_0a, self.upsample(p6_1)), 1))
-        p5_1a = p5_1
+        p5_1a = p5_1.clone()
         p4_1 = self.conv_2(torch.cat((p4_0a, self.upsample(p5_1)), 1))
-        p4_1a = p4_1
+        p4_1a = p4_1.clone()
 
         p7_2 = self.conv_1(p7_0b)
         p6_2 = self.conv_3(torch.cat((p6_0b, p6_1a, self.upsample(p7_2)), 1))
@@ -144,7 +144,7 @@ class XNet(nn.Module):
         conv1 = self.conv1(x)
 
         x11 = self.x11(conv1)
-        x11B = x11
+        x11B = x11.clone()
 
         x12 = self.x12(self.pooling(x11))
         x12A, x12B = x12.clone(), x12.clone()
@@ -163,8 +163,6 @@ class XNet(nn.Module):
         x32pre = self.x32pre(torch.cat((x22A, x12B, self.pooling(x31)), 1))
         x32 = self.x32(x32pre)
         x32A, x32B = x32.clone(), x32.clone()
-        print(x32.shape)
-        print(x13.shape)
 
         x33pre = self.x33pre(torch.cat((x13B, self.pooling(x32)), 1))
         x33 = self.x33(x33pre)

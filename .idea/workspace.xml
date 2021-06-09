@@ -21,6 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="942b94a9-bc31-409f-86c0-f53078652d52" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Model/XNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/Model/XNet.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,6 +226,7 @@
       <workItem from="1619013882954" duration="685000" />
       <workItem from="1619020090435" duration="2000" />
       <workItem from="1619339222647" duration="1206000" />
+      <workItem from="1623243658942" duration="452000" />
     </task>
     <servers />
   </component>
@@ -245,37 +247,33 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state x="184" y="79" width="1071" height="706" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1612440908156">
-      <screen x="0" y="25" width="1440" height="790" />
-    </state>
-    <state x="184" y="79" width="1071" height="706" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.25.1440.790@0.25.1440.790" timestamp="1612440908156" />
     <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1617674423675">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1617674423675" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1618827315563">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1623244111029">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="266" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618827315563" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1623244111029" />
     <state width="1398" height="200" key="GridCell.Tab.0.bottom/0.25.1440.790@0.25.1440.790" timestamp="1618106240851" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1618827315563">
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1623244111029">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="266" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618827315563" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1623244111029" />
     <state width="1398" height="200" key="GridCell.Tab.0.center/0.25.1440.790@0.25.1440.790" timestamp="1618106240851" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1618827315563">
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1623244111029">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="266" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618827315563" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1623244111029" />
     <state width="1398" height="200" key="GridCell.Tab.0.left/0.25.1440.790@0.25.1440.790" timestamp="1618106240850" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1618827315563">
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1623244111029">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="266" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1617282412615" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618827315563" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1623244111029" />
     <state width="1398" height="200" key="GridCell.Tab.0.right/0.25.1440.790@0.25.1440.790" timestamp="1618106240851" />
     <state width="1877" height="337" key="GridCell.Tab.1.bottom" timestamp="1617610580463">
       <screen x="0" y="0" width="1920" height="1040" />
@@ -301,7 +299,6 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="461" y="162" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618297104470" />
-    <state x="346" y="87" key="SettingsEditor/0.25.1440.790@0.25.1440.790" timestamp="1612440542959" />
     <state x="511" y="256" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1617609195083">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -310,10 +307,6 @@
       <screen x="-1920" y="0" width="1920" height="1040" />
     </state>
     <state x="-1920" y="0" width="1666" height="999" maximized="true" key="dock-window-1/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1618821204286" />
-    <state x="-1920" y="0" width="1598" height="999" maximized="true" key="dock-window-2" timestamp="1610335098831">
-      <screen x="-1920" y="0" width="1920" height="1040" />
-    </state>
-    <state x="-1920" y="0" width="1598" height="999" maximized="true" key="dock-window-2/0.0.1920.1040/-1920.0.1920.1040@0.0.1920.1040" timestamp="1610335098831" />
     <state x="701" y="162" key="refactoring.ChangeSignatureDialog" timestamp="1614666151061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -332,7 +325,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/XNet_train_py$pytest_in_1_py.coverage" NAME="pytest in 1.py Coverage Results" MODIFIED="1617018081139" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/XNet_train_py$XNet.coverage" NAME="XNet Coverage Results" MODIFIED="1618827165967" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Model" />
+    <SUITE FILE_PATH="coverage/XNet_train_py$XNet.coverage" NAME="XNet Coverage Results" MODIFIED="1623243947309" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Model" />
     <SUITE FILE_PATH="coverage/XNet_train_py$1.coverage" NAME="1 Coverage Results" MODIFIED="1617019323510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/XNet_train_py$test.coverage" NAME="test Coverage Results" MODIFIED="1617340930005" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/XNet$XNet_test.coverage" NAME="XNet_test Coverage Results" MODIFIED="1610594225716" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
